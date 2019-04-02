@@ -1,0 +1,68 @@
+package com.songzi.yummy.controller.manage;
+
+import com.alibaba.fastjson.JSONObject;
+import com.songzi.yummy.controller.BaseController;
+import com.songzi.yummy.entity.Manager;
+import com.songzi.yummy.service.ManagerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpSession;
+
+@Controller
+public class ManagerLoginController extends BaseController {
+    @Autowired
+    private ManagerService managerService;
+
+    //转到后台管理-登录页
+    @RequestMapping("manage/login")
+    public String goToPage(){
+        logger.info("转到后台管理-登录页");
+        return "manage/loginPage";
+    }
+
+    //登陆验证-ajax
+    @ResponseBody
+    @RequestMapping(value = "manage/login/doLogin",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
+    public String checkLogin(HttpSession session, @RequestParam String username, @RequestParam String password) {
+        logger.info("管理员登录验证");
+        Manager manager = managerService.login(username,password);
+        System.out.println(manager.getId());
+
+        JSONObject object = new JSONObject();
+        if(manager == null){
+            logger.info("登录验证失败");
+            object.put("success",false);
+        } else {
+            logger.info("登录验证成功，管理员ID传入会话");
+            session.setAttribute("managerId",manager.getId());
+            object.put("success",true);
+        }
+
+        return object.toJSONString();
+    }
+
+    //获取管理员头像路径-ajax
+    @ResponseBody
+    @RequestMapping(value = "manage/login/profile_picture",method = RequestMethod.GET,produces = "application/json;charset=utf-8")
+    public String getAdminProfilePicture(@RequestParam String id){
+        logger.info("根据用户名获取管理员头像路径");
+        Manager manager = managerService.get(Long.valueOf(id));
+
+        JSONObject object = new JSONObject();
+        if(manager == null){
+            logger.info("未找到头像路径");
+            object.put("success",false);
+        } else {
+            logger.info("成功获取头像路径");
+            object.put("success",true);
+            object.put("srcString",manager.getPicture());
+        }
+
+        return object.toJSONString();
+    }
+}
