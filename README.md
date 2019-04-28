@@ -1,11 +1,13 @@
-用word
+# EatYummy! 电商项目
 
-数据库设计
-架构设计
-类设计 截图
-其他——开发环境、心得体会
-不要迟于笔试时间
-安全 性能
 
-9:00-10:30
-2:30-5:00上
+
+![License AGPL-2.0](https://img.shields.io/badge/License-AGPL--2-brightgreen.svg)
+
+
+
+![ER图](./pictures/er图.png)
+
+
+
+![包图](./pictures/包图.png)
